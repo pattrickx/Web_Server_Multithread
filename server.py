@@ -1,7 +1,7 @@
 import socket
 import sys
 import threading
-
+import os 
 def handleClient(conn,addr):
     print(f'criando thred para client {addr}')
     while True:
@@ -17,14 +17,36 @@ def handleClient(conn,addr):
             print('#############################')
             print()
             print(f'pegando informação {msg[1][1:]}')
-            dado=open(msg[1][1:]+'.html','rb')
-            enviar=dado.read()
-            head="HTTP/1.1 200 OK\nConnection: close\nContent-Length: "+str(len(enviar))+"\nContent-Type: text/html\n"
+           
+
+        
+            # head="HTTP/1.1 200 OK\r\nConnection: close\r\nContent-Length: "+str(len(enviar))+"\r\n\r\n"
+            arquivos = os.listdir() 
+            print(arquivos)
             
-            enviar=head.encode()+enviar
-            print(enviar)
-            conn.sendall(enviar)
-            dado.close
+                
+            if msg[1][1:]+'.html' in arquivos or msg[1][1:] in arquivos:
+                if '.' in msg[1][1:]:
+                    arq=msg[1][1:]
+                else:
+                    arq=msg[1][1:]+'.html'
+
+                conn.sendall(b'HTTP/1.1 200 OK\n')
+                conn.sendall(b'Connection: close\n')
+                conn.sendall(b'Content-Type: text/html\n')
+                conn.sendall(b'\n')
+
+                dado=open(arq)
+                dado='\n'.join(dado.readlines())
+                conn.sendall(dado.encode())
+                dado.close
+            else:
+                conn.sendall(b'HTTP/1.1 404 ERRO\n')
+                conn.sendall(b'Connection: close\n')
+                conn.sendall(b'Content-Type: text/html\n')
+                conn.sendall(b'\n')
+                conn.sendall(b'\n')
+                conn.sendall(b'<html> <header> <title>ERRO 404</title>  </header>  <body > <H1>ERROR 404 PAGE NOT FOUND </H1> </body></html>')
         break
     conn.close()    
         # conn.sendall(data)
