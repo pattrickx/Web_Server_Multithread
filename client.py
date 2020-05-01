@@ -7,9 +7,10 @@ def recvFromServer(conn):
     while True:
         data = conn.recv(1024)
         msg= str(data,'utf8')
-        if '#close' in msg:
-            break
         print('[SERVER]: ',msg)
+        if 'close' in msg:
+            break
+        
     clientSoket.close()
 
 
