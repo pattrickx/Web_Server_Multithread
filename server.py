@@ -25,21 +25,16 @@ def handleClient(conn,addr):
             print(arquivos)
             
                 
-            if msg[1][1:]+'.html' in arquivos or msg[1][1:] in arquivos:
-                if '.' in msg[1][1:]:
-                    arq=msg[1][1:]
-                else:
-                    arq=msg[1][1:]+'.html'
-
+            if msg[1][1:] in arquivos:
+                
                 conn.sendall(b'HTTP/1.1 200 OK\n')
                 conn.sendall(b'Connection: close\n')
                 conn.sendall(b'Content-Type: text/html\n')
                 conn.sendall(b'\n')
-
-                dado=open(arq)
+                dado=open(msg[1][1:])
                 dado='\n'.join(dado.readlines())
                 conn.sendall(dado.encode())
-                dado.close
+                
             else:
                 conn.sendall(b'HTTP/1.1 404 ERRO\n')
                 conn.sendall(b'Connection: close\n')
