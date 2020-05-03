@@ -26,6 +26,7 @@ def handleClient(conn,addr):
         print(f'[{addr}]: {msg}')
         awn=html_parser.process_message('svr',msg)
         print(awn)
+        print()
         if os.path.exists(awn['path']): #verifica de o arquivo existe
 
             if awn['command'] =='GET' :
