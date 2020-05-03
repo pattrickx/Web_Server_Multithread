@@ -2,6 +2,7 @@ import socket
 import sys
 import threading
 import os 
+import time
 def handleClient(conn,addr):
     print(f'criando thred para client {addr}')
     while True:
@@ -12,8 +13,20 @@ def handleClient(conn,addr):
         #     conn.close()
         #    
         print(f'[{addr}]: {msg}')
+        msg=msg.split(" ")
+
+        def head(msg):
+            conn.sendall(b'HTTP/1.1 200 OK\n')
+            
+            conn.sendall(b'Connection: close\n')
+            conn.sendall(b'Content-Encoding: UTF-8\n')
+            conn.sendall(('Content-Length: ' + str(os.path.getsize(msg)) + '\n').encode())
+            conn.sendall(b'Expires: -1\n')
+            conn.sendall(('Last-Modified: ' + str(time.ctime(os.path.getmtime(msg)))+ '\n').encode())
+            conn.sendall(b'Content-Type: text/html\n')
+            conn.sendall(b'\n')
+
         if 'GET' in msg:
-            msg=msg.split(" ")
             print('#############################')
             print()
             print(f'pegando informação {msg[1][1:]}')
@@ -27,13 +40,11 @@ def handleClient(conn,addr):
                 
             if msg[1][1:] in arquivos:
                 
-                conn.sendall(b'HTTP/1.1 200 OK\n')
-                conn.sendall(b'Connection: close\n')
-                conn.sendall(b'Content-Type: text/html\n')
-                conn.sendall(b'\n')
+                head(msg[1][1:])
                 dado=open(msg[1][1:])
                 dado='\n'.join(dado.readlines())
                 conn.sendall(dado.encode())
+
                 
             else:
                 conn.sendall(b'HTTP/1.1 404 ERRO\n')
@@ -42,6 +53,10 @@ def handleClient(conn,addr):
                 conn.sendall(b'\n')
                 conn.sendall(b'\n')
                 conn.sendall(b'<html> <header> <title>ERRO 404</title>  </header>  <body > <H1>ERROR 404 PAGE NOT FOUND </H1> </body></html>')
+        
+        if 'HEAD' in msg:
+            head(msg[1][1:])
+
         break
     conn.close()    
         # conn.sendall(data)
