@@ -37,7 +37,9 @@ def handleClient(conn,addr):
             elif awn['command']=='HEAD':
                 conn.sendall(head(awn['path']).encode())
             elif awn['command'] == 'POST':
-                print('POST')             
+                print('POST')   
+                print(awn['msg'])
+ 
                 
         else:
             conn.sendall(b'HTTP/1.1 404 ERRO\n')
