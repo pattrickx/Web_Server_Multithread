@@ -11,5 +11,35 @@
             <li>Nulla est eiusmod ipsum duis magna mollit ullamco voluptate aliquip sint.</li>
             <li>Officia sit ut sunt amet nulla ex consequat ipsum.</li>
         </ol>
+        <h4>User Name</h4>
+        
+        <input id="user" style="width: 100;" ></input>
+        <h4>Menseger</h4>  
+        <input id="msg" style="width: 200;" ></input>
+        <button onclick="Post()" >Submit</button>
+        <script>
+            function Post(){
+                var ajax = new XMLHttpRequest();
+
+                // Seta tipo de requisição: Post e a URL da API
+                ajax.open("POST", window.location.href, true);
+                ajax.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+                
+                // Seta paramêtros da requisição e envia a requisição
+                ajax.send("User= "+document.getElementById("user").value+"\r\nMsg= "+document.getElementById("msg").value);
+                // ajax.send("\nMsg= "+document.getElementById("msg").value);
+
+
+                // Cria um evento para receber o retorno.
+                ajax.onreadystatechange = function() {
+                // Caso o state seja 4 e o http.status for 200, é porque a requisiçõe deu certo.
+                    if (ajax.readyState == 4 && ajax.status == 200) {
+                        var data = ajax.responseText;
+                    // Retorno do Ajax
+                        console.log(data);
+                    }
+                }
+            }
+        </script>
     </body>
 </html>
