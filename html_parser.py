@@ -4,7 +4,8 @@ def process_message(server_folder,message):
     query_dict = {}
     query_list = message.split("\r\n")
     query_dict['command'], query_dict['path'], query_dict['protocol'] = query_list[0].split(" ")
-    query_dict['msg']=message.split("\r\n\r\n")[1] if len(message.split("\r\n\r\n"))==2 else ''
+    msg = message.split("\r\n\r\n")
+    query_dict['msg']=msg[1] if len(msg)==2 else ''
     if query_dict['path'] == "/":
         query_dict['path'] = server_folder + '/index.html'
     else:
