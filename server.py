@@ -5,8 +5,8 @@ import os
 import time
 import html_parser
 # ngrok http 45654
-def head(path):
-    header='HTTP/1.1 200 OK\r\n'
+def head(path, response):
+    header='HTTP/1.1 '+ response +'\r\n'
     header+='Connection: close\r\n'
     # header+='Content-Encoding: UTF-8\r\n'
     header+='Content-Length: ' + str(os.path.getsize(path)) + '\r\n'
@@ -17,13 +17,13 @@ def head(path):
     return header
 
 def handleClient(conn,addr):
-    print(f'criando thred para client {addr}')
+    #print(f'criando thred para client {addr}')
     while True:
         
         data = conn.recv(1024)
         msg= str(data,'utf8')
 
-        print(f'[{addr}]: {msg}')
+        #print(f'[{addr}]: {msg}')
         awn=html_parser.process_message('svr',msg)
         print(awn)
         print()
@@ -31,7 +31,7 @@ def handleClient(conn,addr):
 
             if awn['command'] =='GET' :
                 dado=open(awn['path'])
-                dado=head(awn['path'])+('\n'.join(dado.readlines()))
+                dado=head(awn['path'],'200 OK')+('\n'.join(dado.readlines()))
                 conn.sendall(dado.encode())
             # head="HTTP/1.1 200 OK\r\nConnection: close\r\nContent-Length: "+str(len(enviar))+"\r\n\r\n"
             elif awn['command']=='HEAD':
@@ -39,6 +39,8 @@ def handleClient(conn,addr):
             elif awn['command'] == 'POST':
                 print('POST')   
                 print(awn['msg'])
+                dado=head(awn['path'],'204 No Content')+('\n'.join(awn['msg']))
+                conn.sendall(dado.encode())
  
                 
         else:

@@ -18,27 +18,26 @@
         <input id="msg" style="width: 200;" ></input>
         <button onclick="Post()" >Submit</button>
         <script>
-            function Post(){
-                var ajax = new XMLHttpRequest();
-
-                // Seta tipo de requisição: Post e a URL da API
-                ajax.open("POST", window.location.href, true);
-                ajax.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-                
-                // Seta paramêtros da requisição e envia a requisição
-                ajax.send("User= "+document.getElementById("user").value+"\r\nMsg= "+document.getElementById("msg").value);
-                // ajax.send("\nMsg= "+document.getElementById("msg").value);
-
-
-                // Cria um evento para receber o retorno.
-                ajax.onreadystatechange = function() {
-                // Caso o state seja 4 e o http.status for 200, é porque a requisiçõe deu certo.
-                    if (ajax.readyState == 4 && ajax.status == 200) {
-                        var data = ajax.responseText;
-                    // Retorno do Ajax
-                        console.log(data);
+            function tratarEventosConexao(e) {
+                if (e.target.readyState == 4) {
+                    if (e.target.status == 200) { // Sucesso
+                        document.getElementById('tabela').innerHTML =
+                            e.target.responseText;
+                    } else if (e.target.status == 404) { // Arquivo
+                        document.getElementById('tabela').innerHTML =
+                            "<p>Arquivo não encontrado.</p>";
                     }
                 }
+            }
+            function Post(){
+                var XMLHttpRequest = require("xmlhttprequest").XMLHttpRequest;
+                var xhr = new XMLHttpRequest();
+
+                req.open("POST", window.location.href, true);
+                req.setRequestHeader('Content-type','application/x-www-form-urlencoded');
+                req.onreadystatechange=tratarEventosConexao;
+                req.send("User= "+document.getElementById("user").value+"\r\nMsg= "+document.getElementById("msg").value);
+
             }
         </script>
     </body>
