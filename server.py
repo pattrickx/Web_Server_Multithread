@@ -12,7 +12,7 @@ def head(path, response):
     header+='Content-Length: ' + str(os.path.getsize(path)) + '\r\n'
     header+='Expires: -1\r\n'
     header+='Last-Modified: ' + str(time.ctime(os.path.getmtime(path))) + '\r\n'
-    header+='Content-Type: text/html; charset=UTF-8\r\n'
+    header+='Content-Type: text/'+path.split('.')[1]+'; charset=UTF-8\r\n'
     header+='\r\n'
     return header
 
@@ -23,24 +23,39 @@ def handleClient(conn,addr):
         data = conn.recv(1024)
         msg= str(data,'utf8')
 
-        #print(f'[{addr}]: {msg}')
+        # print(f'[{addr}]: {msg}')
         awn=html_parser.process_message('svr',msg)
-        print(awn)
-        print()
+        # print(awn)
+        # print()
         if os.path.exists(awn['path']): #verifica de o arquivo existe
 
             if awn['command'] =='GET' :
-                dado=open(awn['path'])
-                dado=head(awn['path'],'200 OK')+('\n'.join(dado.readlines()))
+                a=open(awn['path'])
+                dado=head(awn['path'],'200 OK')+('\n'.join(a.readlines()))
                 conn.sendall(dado.encode())
+                a.close()
             # head="HTTP/1.1 200 OK\r\nConnection: close\r\nContent-Length: "+str(len(enviar))+"\r\n\r\n"
             elif awn['command']=='HEAD':
                 conn.sendall(head(awn['path']).encode())
             elif awn['command'] == 'POST':
                 print('POST')   
                 print(awn['msg'])
-                dado=head(awn['path'],'204 No Content')+('\n'.join(awn['msg']))
+                arquivo = open("svr/chat/chat.txt")
+                lista = ''.join(arquivo.readlines())
+                arquivo.close()
+                arquivo = open("svr/chat/chat.txt",'w')
+                if lista and awn['msg'] and awn['msg']!='\n':
+                    # print("entrando com algo escrito")
+                    arquivo.write(awn['msg']+"\n"+lista)
+                elif awn['msg'] and awn['msg']!='\n':
+                    # print("entrando com nada escrito")
+                    arquivo.write(awn['msg'])
+                else:
+                    arquivo.write(lista)
+                arquivo.close()
+                dado=head("svr/chat/chat.txt",'204 No Content')
                 conn.sendall(dado.encode())
+               
  
                 
         else:

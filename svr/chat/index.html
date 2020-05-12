@@ -16,30 +16,63 @@
         <input id="user" style="width: 100;" ></input>
         <h4>messenger</h4>  
         <input id="msg" style="width: 200;" ></input>
-        <button onclick="Post()" >Submit</button>
+        <button id="submit" >Submit</button>
+        <div id="chat"></div>
         <script>
-            function Post(){
+           window.onload = function(){
+            CreateChat();
+            document.getElementById("submit").onclick= function(){
                 var ajax = new XMLHttpRequest();
-
-                // Seta tipo de requisição: Post e a URL da API
-                ajax.open("POST", window.location.href, true);
-                ajax.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-                
-                // Seta paramêtros da requisição e envia a requisição
-                ajax.send("User= "+document.getElementById("user").value+"\r\nMsg= "+document.getElementById("msg").value);
-                // ajax.send("\nMsg= "+document.getElementById("msg").value);
 
 
                 // Cria um evento para receber o retorno.
                 ajax.onreadystatechange = function() {
                 // Caso o state seja 4 e o http.status for 200, é porque a requisiçõe deu certo.
-                    if (ajax.readyState == 4 && ajax.status == 200) {
-                        var data = ajax.responseText;
+
+                    if (ajax.readyState == 4 &&( ajax.status == 200 || ajax.status == 204)) {
                     // Retorno do Ajax
-                        console.log(data);
+                    var xhr = new XMLHttpRequest();
+                    xhr.onreadystatechange = function() {
+                    if (xhr.readyState === 4){
+                        document.getElementById('chat').innerHTML = xhr.responseText;
+                        }
+                        };
+                    xhr.open('GET', 'http://localhost:45654/chat/chat.txt');
+                    xhr.send();
                     }
-                }
+                }  
+                
+                // Seta tipo de requisição: Post e a URL da API
+                ajax.open("POST", window.location.href, true);
+                
+                // Seta paramêtros da requisição e envia a requisição
+                ajax.send(document.getElementById("user").value+"\n"+document.getElementById("msg").value);
+                //ajax.send(null);
+             
             }
+            function CreateChat(){ 
+                var xhr = new XMLHttpRequest();
+                xhr.onreadystatechange = function() {
+                if (xhr.readyState === 4){
+                    document.getElementById('chat').innerHTML = xhr.responseText;
+                    }
+                    };
+                xhr.open('GET', 'http://localhost:45654/chat/chat.txt');
+                xhr.send();
+             }
+           }
+           
         </script>
     </body>
 </html>
+
+            <!-- document.getElementById("Submit").onclick= function(){
+                var ajax = new XMLHttpRequest();
+                ajax.onreadystatechange= function(){
+                    if(ajax.readyState==4 && ajax.status == 200 ){
+                        console.log( ajax.responseText);
+                    }
+                }
+                ajax.open("GET", "/char/chat.txt", true);
+                ajax.send(null);
+            } -->
