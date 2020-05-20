@@ -33,9 +33,12 @@
                     // Retorno do Ajax
                     var xhr = new XMLHttpRequest();
                     xhr.onreadystatechange = function() {
-                    if (xhr.readyState === 4){
+                    if (xhr.readyState == 4){
                         document.getElementById('chat').innerHTML = xhr.responseText;
+                        console.log(xhr.responseText);
+                        
                         }
+
                         };
                     xhr.open('GET', 'http://localhost:45654/chat/chat.txt');
                     xhr.send();
@@ -43,7 +46,7 @@
                 }  
                 
                 // Seta tipo de requisição: Post e a URL da API
-                ajax.open("POST", window.location.href, true);
+                ajax.open("POST",'http://localhost:45654/chat/chat.txt', true);
                 
                 // Seta paramêtros da requisição e envia a requisição
                 ajax.send(document.getElementById("user").value+"\n"+document.getElementById("msg").value);
@@ -55,6 +58,7 @@
                 xhr.onreadystatechange = function() {
                 if (xhr.readyState === 4){
                     document.getElementById('chat').innerHTML = xhr.responseText;
+                    console.log(xhr.responseText);
                     }
                     };
                 xhr.open('GET', 'http://localhost:45654/chat/chat.txt');

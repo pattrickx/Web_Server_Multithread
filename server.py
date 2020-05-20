@@ -7,7 +7,7 @@ import html_parser
 # ngrok http 45654
 def head(path, response):
     header='HTTP/1.1 '+ response +'\r\n'
-    header+='Connection: close\r\n'
+    # header+='Connection: close\r\n'
     # header+='Content-Encoding: UTF-8\r\n'
     header+='Content-Length: ' + str(os.path.getsize(path)) + '\r\n'
     header+='Expires: -1\r\n'
@@ -24,49 +24,57 @@ def handleClient(conn,addr):
         msg= str(data,'utf8')
 
         # print(f'[{addr}]: {msg}')
+        # print(msg)
         awn=html_parser.process_message('svr',msg)
         # print(awn)
-        # print()
-        if os.path.exists(awn['path']): #verifica de o arquivo existe
+        if awn: 
+            # print()
+            if awn["connection"]=="Close":
+                print(f'encerrando {addr}')
+                break
+            if os.path.exists(awn['path']): #verifica de o arquivo existe
 
-            if awn['command'] =='GET' :
-                a=open(awn['path'])
-                dado=head(awn['path'],'200 OK')+('\n'.join(a.readlines()))
-                conn.sendall(dado.encode())
-                a.close()
-            # head="HTTP/1.1 200 OK\r\nConnection: close\r\nContent-Length: "+str(len(enviar))+"\r\n\r\n"
-            elif awn['command']=='HEAD':
-                conn.sendall(head(awn['path']).encode())
-            elif awn['command'] == 'POST':
-                print('POST')   
-                print(awn['msg'])
-                arquivo = open("svr/chat/chat.txt")
-                lista = ''.join(arquivo.readlines())
-                arquivo.close()
-                arquivo = open("svr/chat/chat.txt",'w')
-                if lista and awn['msg'] and awn['msg']!='\n':
-                    # print("entrando com algo escrito")
-                    arquivo.write(awn['msg']+"\n"+lista)
-                elif awn['msg'] and awn['msg']!='\n':
-                    # print("entrando com nada escrito")
-                    arquivo.write(awn['msg'])
-                else:
-                    arquivo.write(lista)
-                arquivo.close()
-                dado=head("svr/chat/chat.txt",'204 No Content')
-                conn.sendall(dado.encode())
-               
- 
+                if awn['command'] =='GET' :
+                    a=open(awn['path'])
+                    dado=head(awn['path'],'200 OK')+('\n'.join(a.readlines()))
+                    conn.sendall(dado.encode())
+                    a.close()
+                # head="HTTP/1.1 200 OK\r\nConnection: close\r\nContent-Length: "+str(len(enviar))+"\r\n\r\n"
+                elif awn['command']=='HEAD':
+                    conn.sendall(head(awn['path']).encode())
+                elif awn['command'] == 'POST':
+                    # print('POST')   
+                    # print(awn)
+                    arquivo = open(awn['path'])
+                    lista = ''.join(arquivo.readlines())
+                    arquivo.close()
+                    arquivo = open(awn['path'],'w')
+                    if lista and awn['msg'] and awn['msg']!='\n':
+                        # print("entrando com algo escrito")
+                        arquivo.write(awn['msg']+"\n"+lista)
+                    elif awn['msg'] and awn['msg']!='\n':
+                        # print("entrando com nada escrito")
+                        arquivo.write(awn['msg'])
+                    else:
+                        arquivo.write(lista)
+                    arquivo.close()
+                    a=open(awn['path'])
+                    dado=head(awn['path'],'204 OK')+('\n'.join(a.readlines()))
+                    conn.sendall(dado.encode())
+                    a.close()
                 
-        else:
-            conn.sendall(b'HTTP/1.1 404 ERRO\n')
-            conn.sendall(b'Connection: close\n')
-            conn.sendall(b'Content-Type: text/html\n')
-            conn.sendall(b'\n')
-            conn.sendall(b'<html> <header> <title>ERRO 404</title>  </header>  <body > <H1>ERROR 404 PAGE NOT FOUND </H1> </body></html>')
+
+                    
+            else:
+                conn.sendall(b'HTTP/1.1 404 ERRO\n')
+                conn.sendall(b'Connection: close\n')
+                conn.sendall(b'Content-Type: text/html\n')
+                conn.sendall(b'\n')
+                conn.sendall(b'<html> <header> <title>ERRO 404</title>  </header>  <body > <H1>ERROR 404 PAGE NOT FOUND </H1> </body></html>')
+            
         
     
-        break
+       
     conn.close()    
         # conn.sendall(data)
 
