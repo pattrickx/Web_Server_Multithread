@@ -1,0 +1,84 @@
+<html>
+    <header>
+        <title>CHAT</title>
+    </header>
+    <body>
+        <h1>CHAT</h1>
+        <ol>
+            <li>Est nostrud mollit culpa tempor exercitation ullamco do ad reprehenderit fugiat velit nisi consectetur.</li>
+            <li>Pariatur laborum Lorem ipsum anim mollit.</li>
+            <li>Minim nostrud officia do tempor duis velit sit.</li>
+            <li>Nulla est eiusmod ipsum duis magna mollit ullamco voluptate aliquip sint.</li>
+            <li>Officia sit ut sunt amet nulla ex consequat ipsum.</li>
+        </ol>
+        <image  src="./mask.png">></image>
+    
+        <h4>User Name</h4>
+        
+        <input id="user" style="width: 100;" ></input>
+        <h4>messenger</h4>  
+        <input id="msg" style="width: 200;" ></input>
+        <button id="submit" >Submit</button>
+        <div id="chat"></div>
+        <script>
+           window.onload = function(){
+            CreateChat();
+            document.getElementById("submit").onclick= function(){
+                var ajax = new XMLHttpRequest();
+
+
+                // Cria um evento para receber o retorno.
+                ajax.onreadystatechange = function() {
+                // Caso o state seja 4 e o http.status for 200, é porque a requisiçõe deu certo.
+
+                    if (ajax.readyState == 4 &&( ajax.status == 200 || ajax.status == 204)) {
+                    // Retorno do Ajax
+                    var xhr = new XMLHttpRequest();
+                    xhr.onreadystatechange = function() {
+                    if (xhr.readyState == 4){
+                        document.getElementById('chat').innerHTML = xhr.responseText;
+                        console.log(xhr.responseText);
+                        
+                        }
+
+                        };
+                    xhr.open('GET', 'http://localhost:45654/chat/chat.txt');
+                    xhr.send();
+                    }
+                }  
+                
+                // Seta tipo de requisição: Post e a URL da API
+                ajax.open("POST",'http://localhost:45654/chat/chat.txt', true);
+                
+                // Seta paramêtros da requisição e envia a requisição
+                ajax.send(document.getElementById("user").value+"\n"+document.getElementById("msg").value);
+                //ajax.send(null);
+             
+            }
+            function CreateChat(){ 
+                var xhr = new XMLHttpRequest();
+                xhr.onreadystatechange = function() {
+                if (xhr.readyState === 4){
+                    document.getElementById('chat').innerHTML = xhr.responseText;
+                    console.log(xhr.responseText);
+                    }
+                    };
+                xhr.open('GET', 'http://localhost:45654/chat/chat.txt');
+                xhr.send();
+             }
+           }
+           
+        </script>
+    </body>
+</html>
+
+            <!-- document.getElementById("Submit").onclick= function(){
+                var ajax = new XMLHttpRequest();
+                ajax.onreadystatechange= function(){
+                    if(ajax.readyState==4 && ajax.status == 200 ){
+                        console.log( ajax.responseText);
+                    }
+                }
+                ajax.open("GET", "/char/chat.txt", true);
+                ajax.send(null);
+            } -->
