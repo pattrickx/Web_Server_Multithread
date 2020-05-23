@@ -7,10 +7,10 @@ def process_message(server_folder,message):
         query_dict['command'], query_dict['path'], query_dict['protocol'] = query_list[0].split(" ")
         msg = message.split("\r\n\r\n")
         query_dict['msg']=msg[1] if len(msg)==2 else ''
-        if "Connection:" in message:
-            query_dict["connection"]= ((message.split("Connection:"))[1].split("\r\n"))[0]
+        if "connection:" in message:
+            query_dict["connection"]= ((message.split("connection:"))[1].split("\r\n"))[0]
         else:
-            query_dict["Connection"]=""
+            query_dict["connection"]=""
         if query_dict['path'] == "/":
             query_dict['path'] = server_folder + '/index.html'
         else:
